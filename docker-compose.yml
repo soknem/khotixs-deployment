@@ -38,6 +38,7 @@ services:
       retries: 5
       start_period: 10s
 
+
   # MongoDB Service
   mongodb:
     image: mongo:latest
@@ -56,6 +57,7 @@ services:
       retries: 5
       start_period: 10s
 
+
   # MinIO Service
   minio:
     image: minio/minio:latest
@@ -73,6 +75,7 @@ services:
       timeout: 10s
       retries: 5
       start_period: 10s
+
 
   # PostgREST Service
   postgrest:
@@ -93,6 +96,7 @@ services:
       retries: 5
       start_period: 10s
 
+
   # PostgreSQL Service
   postgres:
     image: postgres:latest
@@ -109,6 +113,7 @@ services:
       timeout: 10s
       retries: 5
       start_period: 10s
+
 
 volumes:
   mongo_data:
