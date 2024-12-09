@@ -1,0 +1,111 @@
+services:
+  # Kafka Service
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 50001
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "50001:50001"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "50001"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:50001
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:50002
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - "50002:50002"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "50002"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  # MongoDB Service
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "50003:50003"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    command: ["--port", "50003"]
+    healthcheck:
+      test: ["CMD", "mongo", "--port", "50003", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  # MinIO Service
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "50004:50004" # MinIO API
+      - "50005:50005" # MinIO Console
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":50005"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:50004/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  # PostgREST Service
+  postgrest:
+    image: postgrest/postgrest:latest
+    container_name: postgrest
+    ports:
+      - "50006:50006"
+    environment:
+      PGRST_DB_URI: postgres://postgres:password@postgres:50007/postgres
+      PGRST_DB_SCHEMA: public
+      PGRST_DB_ANON_ROLE: anon
+    depends_on:
+      - postgres
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:50006"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  # PostgreSQL Service
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - "50007:50007"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost", "-p", "50007"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  mongo_data:
