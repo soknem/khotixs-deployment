@@ -1,15 +1,17 @@
+version: '3.8'
+
 services:
   # Kafka Service
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper_origin
     environment:
-      ZOOKEEPER_CLIENT_PORT: 50001
+      ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     ports:
-      - "50001:50001"
+      - "50001:2181"  # Custom external port for Zookeeper
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "50001"]
+      test: ["CMD", "nc", "-z", "localhost", "2181"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -22,13 +24,16 @@ services:
       - zookeeper
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:50001
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:50002
+      KAFKA_LISTENER_SECURITY_PROTOCOL: PLAINTEXT
+      KAFKA_LISTENER_PORT: 9092
+      KAFKA_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     ports:
-      - "50002:50002"
+      - "50002:9092"  # Custom external port for Kafka
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "50002"]
+      test: ["CMD", "nc", "-z", "localhost", "9092"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -39,15 +44,14 @@ services:
     image: mongo:latest
     container_name: mongodb_origin
     ports:
-      - "50003:50003"
+      - "50003:27017"  # Custom external port for MongoDB
     volumes:
       - mongo_data:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
-    command: ["--port", "50003"]
     healthcheck:
-      test: ["CMD", "mongo", "--port", "50003", "--eval", "db.adminCommand('ping')"]
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -58,14 +62,14 @@ services:
     image: minio/minio:latest
     container_name: minio_origin
     ports:
-      - "50004:50004" # MinIO API
-      - "50005:50005" # MinIO Console
+      - "50004:9000"  # Custom external port for MinIO API
+      - "50005:9001"  # Custom external port for MinIO Console
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
-    command: server /data --console-address ":50005"
+    command: server /data --console-address ":9001"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:50004/minio/health/live"]
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -76,15 +80,15 @@ services:
     image: postgrest/postgrest:latest
     container_name: postgrest_origin
     ports:
-      - "50006:50006"
+      - "50006:3000"  # Custom external port for PostgREST
     environment:
-      PGRST_DB_URI: postgres://postgres:password@postgres:50007/postgres
+      PGRST_DB_URI: postgres://postgres:password@postgres:5432/postgres
       PGRST_DB_SCHEMA: public
       PGRST_DB_ANON_ROLE: anon
     depends_on:
       - postgres
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:50006"]
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -95,13 +99,13 @@ services:
     image: postgres:latest
     container_name: postgres_origin
     ports:
-      - "50007:50007"
+      - "50007:5432"  # Custom external port for PostgreSQL
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: postgres
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost", "-p", "50007"]
+      test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost", "-p", "5432"]
       interval: 30s
       timeout: 10s
       retries: 5
