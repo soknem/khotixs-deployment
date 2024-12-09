@@ -2,7 +2,7 @@ services:
   # Kafka Service
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
-    container_name: zookeeper
+    container_name: zookeeper_origin
     environment:
       ZOOKEEPER_CLIENT_PORT: 50001
       ZOOKEEPER_TICK_TIME: 2000
@@ -17,7 +17,7 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:latest
-    container_name: kafka
+    container_name: kafka_origin
     depends_on:
       - zookeeper
     environment:
@@ -37,7 +37,7 @@ services:
   # MongoDB Service
   mongodb:
     image: mongo:latest
-    container_name: mongodb
+    container_name: mongodb_origin
     ports:
       - "50003:50003"
     volumes:
@@ -56,7 +56,7 @@ services:
   # MinIO Service
   minio:
     image: minio/minio:latest
-    container_name: minio
+    container_name: minio_origin
     ports:
       - "50004:50004" # MinIO API
       - "50005:50005" # MinIO Console
@@ -74,7 +74,7 @@ services:
   # PostgREST Service
   postgrest:
     image: postgrest/postgrest:latest
-    container_name: postgrest
+    container_name: postgrest_origin
     ports:
       - "50006:50006"
     environment:
@@ -93,7 +93,7 @@ services:
   # PostgreSQL Service
   postgres:
     image: postgres:latest
-    container_name: postgres
+    container_name: postgres_origin
     ports:
       - "50007:50007"
     environment:
