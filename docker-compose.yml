@@ -16,24 +16,30 @@ services:
       retries: 5
       start_period: 10s
 
+  # Kafka Service
   kafka:
     image: confluentinc/cp-kafka:latest
     container_name: kafka
     depends_on:
       - zookeeper
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:50001
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:50002
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     ports:
       - "50002:50002"
+      - "50003:9093"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:50002,OUTSIDE://localhost:50003
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_LISTENERS: INSIDE://0.0.0.0:50002,OUTSIDE://0.0.0.0:50003
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:50001
+      KAFKA_CREATE_TOPICS: "baeldung:1:1"
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "50002"]
       interval: 30s
       timeout: 10s
       retries: 5
       start_period: 10s
+    networks:
+      - kafka-net
 
 
   # MongoDB Service
