@@ -30,13 +30,12 @@ services:
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:50001
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
       - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092,PLAINTEXT_INTERNAL://0.0.0.0:29092
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://35.193.215.248:50008,PLAINTEXT_INTERNAL://kafka:29092
     depends_on:
       - zookeeper
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "50008"]
+      test: ["CMD", "nc", "-z", "localhost", "9092"]
       interval: 30s
       timeout: 10s
       retries: 5
