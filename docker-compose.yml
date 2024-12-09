@@ -46,7 +46,7 @@ services:
   # MongoDB Service
   mongodb:
     image: mongo:latest
-    container_name: mongodb
+    container_name: mongodb_origin
     ports:
       - "50003:27017"
     volumes:
