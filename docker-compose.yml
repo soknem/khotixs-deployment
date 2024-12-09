@@ -1,3 +1,4 @@
+version: '3.8'
 
 services:
   # Kafka Service
@@ -15,6 +16,8 @@ services:
       timeout: 10s
       retries: 5
       start_period: 10s
+    networks:
+      - my_network
 
   # Kafka Service
   kafka:
@@ -38,7 +41,8 @@ services:
       timeout: 10s
       retries: 5
       start_period: 10s
-
+    networks:
+      - my_network
 
   # MongoDB Service
   mongodb:
@@ -54,6 +58,8 @@ services:
     command: ["--port", "27017"]
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+    networks:
+      - my_network
 
   # MinIO Service
   minio:
@@ -72,7 +78,8 @@ services:
       timeout: 10s
       retries: 5
       start_period: 10s
-
+    networks:
+      - my_network
 
   # PostgreSQL Service
   postgres:
@@ -90,5 +97,12 @@ services:
       timeout: 10s
       retries: 5
       start_period: 10s
+    networks:
+      - my_network
+
 volumes:
   mongo_data:
+
+networks:
+  my_network:
+    driver: bridge
