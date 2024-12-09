@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # Kafka Service
+  # Zookeeper Service
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper_origin
@@ -26,8 +26,8 @@ services:
     depends_on:
       - zookeeper
     ports:
-      - "50002:50002"
-      - "50008:9093"
+      - "50002:50002"  # Internal Kafka listener
+      - "50008:9093"    # External listener for outside connections
     environment:
       KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:50002,OUTSIDE://35.193.215.248:50008
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
