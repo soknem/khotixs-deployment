@@ -34,7 +34,7 @@ services:
       - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092,PLAINTEXT_INTERNAL://0.0.0.0:29092
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://35.193.215.248:50008,PLAINTEXT_INTERNAL://kafka:29092
     depends_on:
-      - zookeeper_origin
+      - zookeeper
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "50008"]
       interval: 30s
