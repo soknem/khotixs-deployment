@@ -51,7 +51,6 @@ services:
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
 
-
   # MinIO Service
   minio:
     image: minio/minio:latest
@@ -87,7 +86,5 @@ services:
       timeout: 10s
       retries: 5
       start_period: 10s
-
-
 volumes:
   mongo_data:
