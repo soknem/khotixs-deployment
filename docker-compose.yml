@@ -41,19 +41,19 @@ services:
     image: mongo:latest
     container_name: mongodb
     ports:
-      - "50003:50003"
+      - "50003:27017"
     volumes:
       - mongo_data:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
-    command: ["--port", "50003"]
+    command: ["--port", "27017"]
     healthcheck:
-      test: ["CMD", "mongo", "--port", "50003", "--eval", "db.adminCommand('ping')"]
-      interval: 30s
+      test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet
+      interval: 10s
       timeout: 10s
       retries: 5
-      start_period: 10s
+      start_period: 40s
 
 
   # MinIO Service
