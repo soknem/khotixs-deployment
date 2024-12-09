@@ -3,14 +3,14 @@ services:
   # Kafka Service
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
-    container_name: zookeeper_origin
+    container_name: zookeeper
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_CLIENT_PORT: 50001
       ZOOKEEPER_TICK_TIME: 2000
     ports:
-      - "50001:2181"  # Custom external port for Zookeeper
+      - "50001:50001"
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "2181"]
+      test: ["CMD", "nc", "-z", "localhost", "50001"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -18,21 +18,18 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:latest
-    container_name: kafka_origin
+    container_name: kafka
     depends_on:
       - zookeeper
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:50001
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:50002
-      KAFKA_LISTENER_SECURITY_PROTOCOL: PLAINTEXT
-      KAFKA_LISTENER_PORT: 9092
-      KAFKA_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     ports:
-      - "50002:9092"  # Custom external port for Kafka
+      - "50002:50002"
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "9092"]
+      test: ["CMD", "nc", "-z", "localhost", "50002"]
       interval: 30s
       timeout: 10s
       retries: 5
