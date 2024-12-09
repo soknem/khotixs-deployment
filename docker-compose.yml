@@ -3,7 +3,7 @@ services:
   # Kafka Service
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
-    container_name: zookeeper
+    container_name: zookeeper_origin
     environment:
       ZOOKEEPER_CLIENT_PORT: 50001
       ZOOKEEPER_TICK_TIME: 2000
