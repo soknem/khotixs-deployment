@@ -22,7 +22,7 @@ services:
   # Kafka Service
   kafka:
     image: bitnami/kafka:latest
-    container_name: kafka
+    container_name: kafka_origin
     ports:
       - "50008:50008"
     environment:
