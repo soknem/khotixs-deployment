@@ -26,8 +26,8 @@ services:
     depends_on:
       - zookeeper
     ports:
-      - "50002:50002"  # Internal Kafka listener
-      - "50008:9093"    # External listener for outside connections
+      - "50002:50002"  # Internal Kafka listener (for internal communication)
+      - "50008:9093"    # External listener for client connections (e.g., your application connecting on port 50008)
     environment:
       KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:50002,OUTSIDE://35.193.215.248:50008
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
@@ -36,7 +36,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:50001
       KAFKA_CREATE_TOPICS: "baeldung:1:1"
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "50002"]
+      test: ["CMD", "nc", "-z", "localhost", "50008"]  # Healthcheck now verifies port 50008 (external listener)
       interval: 30s
       timeout: 10s
       retries: 5
