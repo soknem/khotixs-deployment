@@ -75,26 +75,6 @@ services:
       start_period: 10s
 
 
-  # PostgREST Service
-  postgrest:
-    image: postgrest/postgrest:latest
-    container_name: postgrest_origin
-    ports:
-      - "50006:3000"  # Custom external port for PostgREST
-    environment:
-      PGRST_DB_URI: postgres://postgres:password@postgres:5432/postgres
-      PGRST_DB_SCHEMA: public
-      PGRST_DB_ANON_ROLE: anon
-    depends_on:
-      - postgres
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 10s
-
-
   # PostgreSQL Service
   postgres:
     image: postgres:latest
